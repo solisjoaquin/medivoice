@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1774294449850,
+    "role": "user",
+    "content": "puedo tomar magnesio para descansar?",
+    "timestamp": "2026-03-23T19:34:09.850Z"
+  },
+  {
+    "id": 1774294453793,
+    "role": "assistant",
+    "content": "Estimado/a doctor/a,\n\nEl usuario, cuyo historial es el siguiente:",
+    "timestamp": "2026-03-23T19:34:13.792Z"
+  },
+  {
+    "id": 1774294931107,
+    "role": "user",
+    "content": "Hola, ¿cómo estás?",
+    "timestamp": "2026-03-23T19:42:11.107Z"
+  },
+  {
+    "id": 1774294939929,
+    "role": "assistant",
+    "content": "Hola. Gracias por tu saludo. Estoy aquí para ayudarte a conectar con el médico. Permíteme presentarle tu consulta y tu historial para que pueda darte la mejor orientación.\n\nEstimado/a doctor/a,\n\nEl usuario se ha conectado para una consulta en directo. Su pregunta específica es si puede tomar magnesio para descansar.\n\nPara su referencia, el historial médico del usuario es el siguiente:\n*   **Medicamentos actuales:** Ibuprofeno 400\n*   **Condiciones / diagnósticos:** Hipertensión\n*   **Alergias conocidas:** Aspirina\n\nPor favor, el usuario espera su orientación respecto al magnesio. Gracias.",
+    "timestamp": "2026-03-23T19:42:19.928Z"
+  }
+]
