@@ -6,39 +6,70 @@ function getAi() {
     });
 }
 
-function buildSystemPrompt(profile) {
-    const meds = profile.medications?.join(', ') || 'ninguno'
-    const conditions = profile.conditions?.join(', ') || 'ninguna'
-    const allergies = profile.allergies?.join(', ') || 'ninguna'
+function buildSystemPrompt(profile, doctorData = null) {
+    const meds = profile.medications?.join(', ') || 'none'
+    const conditions = profile.conditions?.join(', ') || 'none'
+    const allergies = profile.allergies?.join(', ') || 'none'
 
-    return `Sos MediVoz, un asistente médico de voz diseñado para explicar información médica de forma clara, simple y personalizada.
+    let doctorSection = ''
+    if (doctorData && (doctorData.medications?.length > 0 || doctorData.studies?.length > 0)) {
+        const medsList = (doctorData.medications || [])
+            .filter(m => m.assigned)
+            .map(m => `- ${m.name}: ${m.description || ''}`)
+            .join('\n');
 
-PERFIL DEL USUARIO:
-- Medicamentos actuales: ${meds}
-- Condiciones / diagnósticos: ${conditions}
-- Alergias conocidas: ${allergies}
+        const prospectsList = (doctorData.medications || [])
+            .filter(m => m.assigned && m.scrapedContent)
+            .map(m => `Package insert for ${m.name}:\n${m.scrapedContent.slice(0, 1500)}`)
+            .join('\n\n');
 
-INSTRUCCIONES:
-- Explicá siempre en español, con lenguaje simple y accesible.
-- Considerá el perfil del usuario para personalizar la respuesta (contraindicaciones, interacciones, etc.).
-- Si hay una posible interacción con sus medicamentos actuales o una alergia relevante, mencionalo claramente al inicio.
-- Estructura la respuesta para ser narrada en voz alta: sin listas con bullets, sin markdown, solo párrafos fluidos.
-- Máximo 150 palabras. Conciso pero completo.
-- Siempre cerrá con: "Si tenés dudas, podés consultar con tu médico desde esta misma app."
-- No diagnosticás ni recetás. Solo informás.`
+        const studiesList = (doctorData.studies || [])
+            .filter(s => s.assigned)
+            .map(s => `- ${s.name} (${s.date}):\n  Result: ${s.result}\n  Notes: ${s.notes || ''}`)
+            .join('\n');
+
+        doctorSection = `
+INFORMATION ADDED BY DOCTOR:
+- Assigned medications:
+${medsList || 'None'}
+
+- Available package inserts:
+${prospectsList || 'None'}
+
+- Recent studies:
+${studiesList || 'None'}
+`;
+    }
+
+    return `You are MediVoice, a voice medical assistant designed to explain medical information clearly, simply, and personalized.
+${doctorSection}
+
+USER PROFILE:
+- Current medications: ${meds}
+- Conditions / diagnoses: ${conditions}
+- Known allergies: ${allergies}
+
+INSTRUCTIONS:
+- Always explain in English, using simple and accessible language.
+- Consider the user profile to personalize the response (contraindications, interactions, etc.).
+- If there is a possible interaction with their current medications or a relevant allergy, mention it clearly at the beginning.
+- Structure the response to be read aloud: no bulleted lists, no markdown, just fluent paragraphs.
+- Maximum 150 words. Concise but complete.
+- Always close with: "If you have questions, you can consult your doctor through this app."
+- You do not diagnose or prescribe. You only inform.`
 }
 
-export async function generateMedicalResponse(query, profile, scrapedContent = '') {
+export async function generateMedicalResponse(query, profile, scrapedContent = '', doctorData = {}) {
     const userContent = scrapedContent
-        ? `El usuario pregunta: "${query}"\n\nContenido del prospecto o página médica:\n${scrapedContent.slice(0, 4000)}`
-        : `El usuario pregunta: "${query}"`
+        ? `The user asks: "${query}"\n\nPackage insert or medical page content:\n${scrapedContent.slice(0, 4000)}`
+        : `The user asks: "${query}"`
 
     const ai = getAi();
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: userContent,
         config: {
-            systemInstruction: buildSystemPrompt(profile)
+            systemInstruction: buildSystemPrompt(profile, doctorData)
         }
     });
 
@@ -48,8 +79,8 @@ export async function generateMedicalResponse(query, profile, scrapedContent = '
 export async function generateChatResponse(userMessage, profile, history) {
     const systemPrompt = `${buildSystemPrompt(profile)}
 
-Estás en modo chat directo con el médico del usuario. El usuario no resolvió su duda con la consulta automática y quiere hablar con un profesional.
-Actuá como intermediario: resumí el contexto, facilitá la comunicación y ayudá al médico a entender el historial del paciente.`
+You are in direct chat mode with the user's doctor. The user did not resolve their question with the automatic consultation and wants to speak with a professional.
+Act as an intermediary: summarize the context, facilitate communication, and help the doctor understand the patient's medical history.`
 
     const formattedHistory = history.slice(-10).map(m => ({
         role: m.role === 'assistant' || m.role === 'doctor' || m.role === 'model' ? 'model' : 'user',
@@ -76,8 +107,8 @@ Actuá como intermediario: resumí el contexto, facilitá la comunicación y ayu
 export async function generateChatStream(userMessage, profile, history) {
     const systemPrompt = `${buildSystemPrompt(profile)}
 
-Estás en modo chat directo con el médico del usuario. El usuario no resolvió su duda con la consulta automática y quiere hablar con un profesional.
-Actuá como intermediario: resumí el contexto, facilitá la comunicación y ayudá al médico a entender el historial del paciente.`
+You are in direct chat mode with the user's doctor. The user did not resolve their question with the automatic consultation and wants to speak with a professional.
+Act as an intermediary: summarize the context, facilitate communication, and help the doctor understand the patient's medical history.`
 
     const formattedHistory = history.slice(-10).map(m => ({
         role: m.role === 'assistant' || m.role === 'doctor' || m.role === 'model' ? 'model' : 'user',

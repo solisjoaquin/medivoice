@@ -58,6 +58,7 @@ export async function sendMessageStream(message, onChunk) {
         try {
           const parsed = JSON.parse(dataStr)
           if (parsed.text) {
+            console.log('--- CHUNK RECEIVED ---', parsed.text)
             onChunk(parsed.text)
           } else if (parsed.error) {
             throw new Error(parsed.error)

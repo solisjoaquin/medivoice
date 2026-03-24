@@ -15,9 +15,9 @@ router.put('/', (req, res) => {
 
   const profile = {
     medications: medications || [],
-    conditions:  conditions  || [],
-    allergies:   allergies   || [],
-    studies:     studies     || [],
+    conditions: conditions || [],
+    allergies: allergies || [],
+    studies: studies || [],
   }
 
   writeJSON('profile', profile)
@@ -31,7 +31,7 @@ router.patch('/:section', (req, res) => {
   const allowed = ['medications', 'conditions', 'allergies', 'studies']
 
   if (!allowed.includes(section)) {
-    return res.status(400).json({ error: `Sección inválida. Opciones: ${allowed.join(', ')}` })
+    return res.status(400).json({ error: `Invalid section. Options: ${allowed.join(', ')}` })
   }
 
   const profile = readJSON('profile')
@@ -47,11 +47,11 @@ router.post('/:section/add', (req, res) => {
   const allowed = ['medications', 'conditions', 'allergies', 'studies']
 
   if (!allowed.includes(section)) {
-    return res.status(400).json({ error: `Sección inválida. Opciones: ${allowed.join(', ')}` })
+    return res.status(400).json({ error: `Invalid section. Options: ${allowed.join(', ')}` })
   }
 
   const { item } = req.body
-  if (!item) return res.status(400).json({ error: 'Falta el campo "item"' })
+  if (!item) return res.status(400).json({ error: 'Missing "item" field' })
 
   const profile = readJSON('profile')
   if (!profile[section].includes(item)) {
@@ -68,7 +68,7 @@ router.delete('/:section/:item', (req, res) => {
   const allowed = ['medications', 'conditions', 'allergies', 'studies']
 
   if (!allowed.includes(section)) {
-    return res.status(400).json({ error: `Sección inválida.` })
+    return res.status(400).json({ error: `Invalid section.` })
   }
 
   const profile = readJSON('profile')

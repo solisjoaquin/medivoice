@@ -5,9 +5,10 @@ import cors from 'cors'
 
 import profileRoutes from './routes/profile.js'
 import consultRoutes from './routes/consult.js'
-import chatRoutes    from './routes/chat.js'
+import chatRoutes from './routes/chat.js'
+import doctorRoutes from './routes/doctor.js'
 
-const app  = express()
+const app = express()
 const PORT = process.env.PORT || 3000
 
 // Middlewares
@@ -17,23 +18,24 @@ app.use(express.json())
 // Health check
 app.get('/health', (req, res) => {
   res.json({
-    ok:      true,
+    ok: true,
     service: 'MediVoz API',
     version: '1.0.0',
-    time:    new Date().toISOString(),
+    time: new Date().toISOString(),
   })
 })
 
 // Rutas
 app.use('/profile', profileRoutes)
 app.use('/consult', consultRoutes)
-app.use('/chat',    chatRoutes)
+app.use('/chat', chatRoutes)
+app.use('/doctor', doctorRoutes)
 
 // Error handler global
 app.use((err, req, res, next) => {
   console.error('[ERROR]', err.message)
   res.status(500).json({
-    error:   'Error interno del servidor',
+    error: 'Error interno del servidor',
     message: err.message,
   })
 })

@@ -1,26 +1,14 @@
 [
   {
-    "id": 1774294449850,
+    "id": 1774301049502,
     "role": "user",
-    "content": "puedo tomar magnesio para descansar?",
-    "timestamp": "2026-03-23T19:34:09.850Z"
+    "content": "Hola, ¿puedes contarme de qué se trata un resfriado muy brevemente?",
+    "timestamp": "2026-03-23T21:24:09.502Z"
   },
   {
-    "id": 1774294453793,
+    "id": 1774301057237,
     "role": "assistant",
-    "content": "Estimado/a doctor/a,\n\nEl usuario, cuyo historial es el siguiente:",
-    "timestamp": "2026-03-23T19:34:13.792Z"
-  },
-  {
-    "id": 1774294931107,
-    "role": "user",
-    "content": "Hola, ¿cómo estás?",
-    "timestamp": "2026-03-23T19:42:11.107Z"
-  },
-  {
-    "id": 1774294939929,
-    "role": "assistant",
-    "content": "Hola. Gracias por tu saludo. Estoy aquí para ayudarte a conectar con el médico. Permíteme presentarle tu consulta y tu historial para que pueda darte la mejor orientación.\n\nEstimado/a doctor/a,\n\nEl usuario se ha conectado para una consulta en directo. Su pregunta específica es si puede tomar magnesio para descansar.\n\nPara su referencia, el historial médico del usuario es el siguiente:\n*   **Medicamentos actuales:** Ibuprofeno 400\n*   **Condiciones / diagnósticos:** Hipertensión\n*   **Alergias conocidas:** Aspirina\n\nPor favor, el usuario espera su orientación respecto al magnesio. Gracias.",
-    "timestamp": "2026-03-23T19:42:19.928Z"
+    "content": "Hola. Un resfriado común es una infección viral leve que afecta principalmente la nariz y la garganta. Es causado por diferentes tipos de virus y, por lo general, no es grave. Los síntomas más comunes incluyen secreción o congestión nasal, estornudos, dolor de garganta y tos. A veces también puedes sentir un poco de cansancio o un dolor de cabeza leve.\n\nGeneralmente, el resfriado mejora por sí solo en una semana o diez días. Es importante recordar que al tener hipertensión, algunos medicamentos para los síntomas del resfriado, especialmente los descongestivos, podrían no ser adecuados para vos. Si pensás tomar algo para aliviar los síntomas, es fundamental que lo consultes con tu médico, considerando también tu medicamento actual, Ibuprofeno. Si tenés dudas, podés consultar con tu médico desde esta misma app.",
+    "timestamp": "2026-03-23T21:24:17.236Z"
   }
 ]

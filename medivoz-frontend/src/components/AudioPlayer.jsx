@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 const BAR_COUNT = 28
 
 export default function AudioPlayer({ base64, mimeType = 'audio/mpeg', text }) {
-  const [playing, setPlaying]   = useState(false)
+  const [playing, setPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
   const audioRef = useRef(null)
 
@@ -37,14 +37,14 @@ export default function AudioPlayer({ base64, mimeType = 'audio/mpeg', text }) {
   const filledBars = Math.round(progress * BAR_COUNT)
 
   // Bar heights for a pseudo-waveform
-  const heights = [30,55,40,70,45,60,35,80,50,65,40,75,55,45,70,60,50,80,35,65,45,55,70,40,60,50,65,35]
+  const heights = [30, 55, 40, 70, 45, 60, 35, 80, 50, 65, 40, 75, 55, 45, 70, 60, 50, 80, 35, 65, 45, 55, 70, 40, 60, 50, 65, 35]
 
   return (
     <div className="audio-player">
-      <div className="audio-player-label">Respuesta en audio</div>
+      <div className="audio-player-label">Audio response</div>
       {text && <p className="audio-player-text">{text}</p>}
       <div className="audio-controls">
-        <button className="audio-play-btn" onClick={toggle} aria-label={playing ? 'Pausar' : 'Reproducir'}>
+        <button className="audio-play-btn" onClick={toggle} aria-label={playing ? 'Pause' : 'Play'}>
           {playing ? '⏸' : '▶'}
         </button>
         <div className="audio-waveform" role="progressbar">

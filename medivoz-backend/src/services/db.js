@@ -7,7 +7,8 @@ const dataDir = join(__dirname, '../data')
 
 const paths = {
   profile: join(dataDir, 'profile.json'),
-  chat:    join(dataDir, 'chat.json'),
+  chat: join(dataDir, 'chat.json'),
+  doctor: join(dataDir, 'doctor.json'),
 }
 
 export function readJSON(key) {

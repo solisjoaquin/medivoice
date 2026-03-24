@@ -1,12 +1,7 @@
 {
-  "medications": [
-    "Ibuprofeno 400"
-  ],
-  "conditions": [
-    "Hipertension"
-  ],
-  "allergies": [
-    "Aspirina"
-  ],
+  "name": "Jhon Doe",
+  "medications": [],
+  "conditions": [],
+  "allergies": [],
   "studies": []
 }

@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
 router.post('/', async (req, res) => {
   const { message, role = 'user' } = req.body
 
-  if (!message) return res.status(400).json({ error: 'Falta "message"' })
+  if (!message) return res.status(400).json({ error: 'Missing "message"' })
 
   const history = readJSON('chat')
   const profile = readJSON('profile')
@@ -72,7 +72,7 @@ router.post('/', async (req, res) => {
 // DELETE /chat - limpiar historial del chat
 router.delete('/', (req, res) => {
   writeJSON('chat', [])
-  res.json({ ok: true, message: 'Historial borrado' })
+  res.json({ ok: true, message: 'History cleared' })
 })
 
 export default router
