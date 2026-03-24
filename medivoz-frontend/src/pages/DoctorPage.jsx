@@ -11,6 +11,7 @@ export default function DoctorPage() {
 
     const [medications, setMedications] = useState([])
     const [studies, setStudies] = useState([])
+    const [messages, setMessages] = useState([])
     const [profile, setProfile] = useState(null)
     const [loadingConfig, setLoadingConfig] = useState(true)
 
@@ -28,14 +29,19 @@ export default function DoctorPage() {
     const [studySaving, setStudySaving] = useState(false)
 
     useEffect(() => {
-        Promise.all([getMedications(), getStudies(), getProfile()])
-            .then(([m, s, p]) => {
-                setMedications(m)
-                setStudies(s)
-                setProfile(p)
-            })
-            .catch(console.error)
-            .finally(() => setLoadingConfig(false))
+        const load = async () => {
+            const { getMessages } = await import('../services/doctorApi.js').catch(() => ({ getMessages: () => Promise.resolve([]) }))
+            Promise.all([getMedications(), getStudies(), getProfile(), getMessages()])
+                .then(([m, s, p, msgs]) => {
+                    setMedications(m)
+                    setStudies(s)
+                    setProfile(p)
+                    setMessages(msgs || [])
+                })
+                .catch(console.error)
+                .finally(() => setLoadingConfig(false))
+        }
+        load()
     }, [])
 
     const handleAddMedication = async (e) => {
@@ -246,6 +252,28 @@ export default function DoctorPage() {
                                             </label>
                                             {s.assigned ? <span className="tag tag-blue" style={{ fontSize: 11 }}>Visible to AI</span> : <span className="tag tag-slate" style={{ fontSize: 11 }}>Not assigned</span>}
                                         </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Panel Central/Inferior: Mensajes (Opcional, ocupando ancho completo si queremos) */}
+                        <div className="card" style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: 24 }}>
+                            <div>
+                                <h2 className="card-title">Messages from patient</h2>
+                                <p style={{ fontSize: 13, color: 'var(--slate-400)', marginTop: -8 }}>Written notes sent after voice calls.</p>
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                {messages.length === 0 && <p style={{ fontSize: 14, color: 'var(--slate-400)', textAlign: 'center', padding: 20 }}>No messages yet.</p>}
+
+                                {messages.map(msg => (
+                                    <div key={msg.id} style={{ border: '1px solid var(--slate-200)', borderRadius: 12, padding: 16, background: 'var(--slate-50)' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                                            <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: 'var(--blue-600)' }}>Patient Message</span>
+                                            <span style={{ fontSize: 11, color: 'var(--slate-400)' }}>{new Date(msg.timestamp).toLocaleString()}</span>
+                                        </div>
+                                        <p style={{ fontSize: 14, color: 'var(--slate-800)', margin: 0, whiteSpace: 'pre-wrap' }}>{msg.text}</p>
                                     </div>
                                 ))}
                             </div>

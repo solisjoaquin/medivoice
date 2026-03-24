@@ -19,3 +19,6 @@ export const getStudies = () => req('GET', '/doctor/studies')
 export const addStudy = (data) => req('POST', '/doctor/studies', data)
 export const deleteStudy = (id) => req('DELETE', `/doctor/studies/${id}`)
 export const assignStudy = (id, val) => req('PATCH', `/doctor/studies/${id}/assign`, { assigned: val })
+
+export const sendMessageToDoctor = (text) => req('POST', '/doctor/messages', { text })
+export const getMessages = () => req('GET', '/doctor/messages')

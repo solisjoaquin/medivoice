@@ -26,6 +26,10 @@ export const getChat = () => req('GET', '/chat')
 export const sendMessage = (message) => req('POST', '/chat', { message, role: 'user' })
 export const clearChat = () => req('DELETE', '/chat')
 
+// Agent
+export const getAgentSignedUrl = () => req('GET', '/agent/signed-url')
+export const getAgentPrompt = () => req('GET', '/agent/prompt')
+
 export async function sendMessageStream(message, onChunk) {
   const res = await fetch(`${BASE}/chat`, {
     method: 'POST',
