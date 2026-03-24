@@ -4,7 +4,7 @@ import TagInput from './TagInput.jsx'
 
 const SECTIONS = [
     { key: 'medications', label: 'Current medications', icon: '💊', color: 'tag-blue', placeholder: 'e.g., Ibuprofen 400mg, Metformin 850mg' },
-    { key: 'conditions', label: 'Conditions / diagnoses', icon: '📋', color: 'tag-amber', placeholder: 'e.g., Type 2 Diabetes, Hypertension' },
+    // { key: 'conditions', label: 'Conditions / diagnoses', icon: '📋', color: 'tag-amber', placeholder: 'e.g., Type 2 Diabetes, Hypertension' },
     { key: 'allergies', label: 'Allergies', icon: '⚠️', color: 'tag-red', placeholder: 'e.g., Penicillin, Aspirin' },
     { key: 'studies', label: 'Studies / lab results', icon: '🔬', color: 'tag-green', placeholder: 'e.g., Complete blood count, Fasting glucose' },
 ]

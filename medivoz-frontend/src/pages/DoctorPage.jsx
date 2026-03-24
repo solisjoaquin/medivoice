@@ -139,7 +139,7 @@ export default function DoctorPage() {
                 </div>
 
                 <div style={{ fontSize: 14, color: 'var(--slate-600)' }}>
-                    Patient: <strong>{profile?.name || 'My Profile'}</strong>
+                    Patient: <strong>{profile?.name || 'My Profile'} (71)</strong>
                 </div>
             </header>
 
@@ -150,135 +150,187 @@ export default function DoctorPage() {
                         <span className="spinner" style={{ color: 'var(--success)' }}></span>
                     </div>
                 ) : (
-                    <div className="dashboard-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
 
-                        {/* Panel Izquierdo: Medicamentos */}
-                        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-                            <div>
-                                <h2 className="card-title">Patient's medications</h2>
-                                <p style={{ fontSize: 13, color: 'var(--slate-400)', marginTop: -8 }}>Add medication and scrape real package inserts.</p>
-                            </div>
-
-                            <form onSubmit={handleAddMedication} style={{ display: 'flex', flexDirection: 'column', gap: 12, background: 'var(--slate-50)', padding: 16, borderRadius: 12 }}>
-                                <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--slate-600)' }}>＋ Add medication</h3>
-                                <input className="input" placeholder="Name (e.g., Ibuprofen 400mg) *" value={medName} onChange={e => setMedName(e.target.value)} required />
-                                <input className="input" placeholder="Short description (optional)" value={medDesc} onChange={e => setMedDesc(e.target.value)} />
-                                <input className="input" type="url" placeholder="Package insert URL (optional)" value={medUrl} onChange={e => setMedUrl(e.target.value)} />
-
-                                <button type="submit" className="btn" style={{ background: 'var(--success)', color: 'white' }} disabled={!medName || medScraping}>
-                                    {medScraping ? (
-                                        <><span className="spinner" /> Processing insert with Firecrawl...</>
-                                    ) : 'Save medication'}
-                                </button>
-                            </form>
-
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                                {medications.length === 0 && <p style={{ fontSize: 14, color: 'var(--slate-400)', textAlign: 'center' }}>No medications added.</p>}
-
-                                {medications.map(m => (
-                                    <div key={m.id} style={{ border: '1px solid var(--slate-200)', borderRadius: 12, padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                            <div>
-                                                <h4 style={{ fontSize: 16, fontWeight: 600, color: 'var(--blue-900)' }}>{m.name}</h4>
-                                                {m.description && <p style={{ fontSize: 13, color: 'var(--slate-600)', marginTop: 4 }}>{m.description}</p>}
-                                            </div>
-                                            <button className="tag-remove" onClick={() => handleDeleteMedication(m.id)}>✕</button>
-                                        </div>
-
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                            {m.scrapedContent ? (
-                                                <span className="tag tag-green">✓ Insert loaded</span>
-                                            ) : (
-                                                <span className="tag tag-slate">No insert</span>
-                                            )}
-                                        </div>
-
-                                        <div style={{ borderTop: '1px solid var(--slate-100)', paddingTop: 12, marginTop: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, cursor: 'pointer' }}>
-                                                <input type="checkbox" checked={m.assigned} onChange={e => handleAssignMedication(m.id, e.target.checked)} style={{ accentColor: 'var(--success)', transform: 'scale(1.2)' }} />
-                                                <span style={{ fontWeight: 500 }}>Assign to patient</span>
-                                            </label>
-                                            {m.assigned ? <span className="tag tag-blue" style={{ fontSize: 11 }}>Visible to AI</span> : <span className="tag tag-slate" style={{ fontSize: 11 }}>Not assigned</span>}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Panel Derecho: Estudios */}
-                        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-                            <div>
-                                <h2 className="card-title">Patient's studies</h2>
-                                <p style={{ fontSize: 13, color: 'var(--slate-400)', marginTop: -8 }}>Add lab results or imaging.</p>
-                            </div>
-
-                            <form onSubmit={handleAddStudy} style={{ display: 'flex', flexDirection: 'column', gap: 12, background: 'var(--slate-50)', padding: 16, borderRadius: 12 }}>
-                                <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--slate-600)' }}>＋ Add study</h3>
-                                <div style={{ display: 'flex', gap: 12 }}>
-                                    <input className="input" placeholder="Name *" value={studyName} onChange={e => setStudyName(e.target.value)} style={{ flex: 1 }} required />
-                                    <input className="input" type="date" value={studyDate} onChange={e => setStudyDate(e.target.value)} style={{ width: 140 }} />
-                                </div>
-                                <textarea className="input" placeholder="Result (free text) *" value={studyResult} onChange={e => setStudyResult(e.target.value)} rows={3} required style={{ resize: 'vertical' }} />
-                                <textarea className="input" placeholder="Notes for patient (optional)" value={studyNotes} onChange={e => setStudyNotes(e.target.value)} rows={2} style={{ resize: 'vertical' }} />
-
-                                <button type="submit" className="btn btn-secondary" disabled={!studyName || !studyResult || studySaving}>
-                                    {studySaving ? <span className="spinner" /> : 'Save study'}
-                                </button>
-                            </form>
-
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                                {studies.length === 0 && <p style={{ fontSize: 14, color: 'var(--slate-400)', textAlign: 'center' }}>No studies added.</p>}
-
-                                {studies.map(s => (
-                                    <div key={s.id} style={{ border: '1px solid var(--slate-200)', borderRadius: 12, padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                            <div>
-                                                <h4 style={{ fontSize: 16, fontWeight: 600, color: 'var(--blue-900)' }}>{s.name}</h4>
-                                                <p style={{ fontSize: 12, color: 'var(--slate-400)', marginTop: 2 }}>
-                                                    {new Date(s.date).toLocaleDateString('en-US')}
-                                                </p>
-                                            </div>
-                                            <button className="tag-remove" onClick={() => handleDeleteStudy(s.id)}>✕</button>
-                                        </div>
-
-                                        <div style={{ background: 'var(--slate-50)', padding: 12, borderRadius: 8, fontSize: 13, color: 'var(--slate-700)', fontStyle: 'italic' }}>
-                                            "{s.result.length > 80 ? s.result.slice(0, 80) + '...' : s.result}"
-                                        </div>
-
-                                        <div style={{ borderTop: '1px solid var(--slate-100)', paddingTop: 12, marginTop: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, cursor: 'pointer' }}>
-                                                <input type="checkbox" checked={s.assigned} onChange={e => handleAssignStudy(s.id, e.target.checked)} style={{ accentColor: 'var(--blue-500)', transform: 'scale(1.2)' }} />
-                                                <span style={{ fontWeight: 500 }}>Assign to patient</span>
-                                            </label>
-                                            {s.assigned ? <span className="tag tag-blue" style={{ fontSize: 11 }}>Visible to AI</span> : <span className="tag tag-slate" style={{ fontSize: 11 }}>Not assigned</span>}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Panel Central/Inferior: Mensajes (Opcional, ocupando ancho completo si queremos) */}
-                        <div className="card" style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: 24 }}>
-                            <div>
-                                <h2 className="card-title">Messages from patient</h2>
-                                <p style={{ fontSize: 13, color: 'var(--slate-400)', marginTop: -8 }}>Written notes sent after voice calls.</p>
-                            </div>
-
+                        {/* Patient Condition Banner (Hardcoded) */}
+                        <div className="card" style={{
+                            background: 'linear-gradient(135deg, var(--blue-900), #0f172a)',
+                            color: 'white',
+                            border: 'none',
+                            padding: '24px 32px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+                        }}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                                {messages.length === 0 && <p style={{ fontSize: 14, color: 'var(--slate-400)', textAlign: 'center', padding: 20 }}>No messages yet.</p>}
-
-                                {messages.map(msg => (
-                                    <div key={msg.id} style={{ border: '1px solid var(--slate-200)', borderRadius: 12, padding: 16, background: 'var(--slate-50)' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                                            <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: 'var(--blue-600)' }}>Patient Message</span>
-                                            <span style={{ fontSize: 11, color: 'var(--slate-400)' }}>{new Date(msg.timestamp).toLocaleString()}</span>
-                                        </div>
-                                        <p style={{ fontSize: 14, color: 'var(--slate-800)', margin: 0, whiteSpace: 'pre-wrap' }}>{msg.text}</p>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                    <span style={{ fontSize: 24 }}>📋</span>
+                                    <h2 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>Patient Health Status</h2>
+                                    {/* <span className="tag" style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)', fontWeight: 600 }}>Urgent Review</span>
+ */}                                </div>
+                                <div style={{ display: 'flex', gap: 24, marginTop: 4 }}>
+                                    <div>
+                                        <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', opacity: 0.6 }}>Primary Diagnosis</div>
+                                        <div style={{ fontSize: 16, fontWeight: 500 }}>Congestive Heart Failure (CHF)</div>
                                     </div>
-                                ))}
+                                    <div style={{ width: 1, background: 'rgba(255,255,255,0.1)' }} />
+                                    <div>
+                                        <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', opacity: 0.6 }}>Current Condition</div>
+                                        <div style={{ fontSize: 16, fontWeight: 500 }}>Stable - Monitoring for Dyspnea</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style={{ display: 'flex', gap: 32 }}>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: 11, textTransform: 'uppercase', opacity: 0.6, marginBottom: 4 }}>BP</div>
+                                    <div style={{ fontSize: 24, fontWeight: 700 }}>135/85</div>
+                                    <div style={{ fontSize: 10, color: '#f87171' }}>▲ High</div>
+                                </div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: 11, textTransform: 'uppercase', opacity: 0.6, marginBottom: 4 }}>HR</div>
+                                    <div style={{ fontSize: 24, fontWeight: 700 }}>72<span style={{ fontSize: 14, fontWeight: 400, opacity: 0.6 }}> bpm</span></div>
+                                    <div style={{ fontSize: 10, color: 'var(--success)' }}>● Normal</div>
+                                </div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: 11, textTransform: 'uppercase', opacity: 0.6, marginBottom: 4 }}>SpO2</div>
+                                    <div style={{ fontSize: 24, fontWeight: 700 }}>98<span style={{ fontSize: 14, fontWeight: 400, opacity: 0.6 }}>%</span></div>
+                                    <div style={{ fontSize: 10, color: 'var(--success)' }}>● Normal</div>
+                                </div>
                             </div>
                         </div>
 
+                        <div className="dashboard-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
+
+                            {/* Panel Izquierdo: Medicamentos */}
+                            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                                <div>
+                                    <h2 className="card-title">Patient's medications</h2>
+                                    <p style={{ fontSize: 13, color: 'var(--slate-400)', marginTop: -8 }}>Add medication and scrape real package inserts.</p>
+                                </div>
+
+                                <form onSubmit={handleAddMedication} style={{ display: 'flex', flexDirection: 'column', gap: 12, background: 'var(--slate-50)', padding: 16, borderRadius: 12 }}>
+                                    <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--slate-600)' }}>＋ Add medication</h3>
+                                    <input className="input" placeholder="Name (e.g., Ibuprofen 400mg) *" value={medName} onChange={e => setMedName(e.target.value)} required />
+                                    <input className="input" placeholder="Short description (optional)" value={medDesc} onChange={e => setMedDesc(e.target.value)} />
+                                    <input className="input" type="url" placeholder="Package insert URL (optional)" value={medUrl} onChange={e => setMedUrl(e.target.value)} />
+
+                                    <button type="submit" className="btn" style={{ background: 'var(--success)', color: 'white' }} disabled={!medName || medScraping}>
+                                        {medScraping ? (
+                                            <><span className="spinner" /> Processing insert with Firecrawl...</>
+                                        ) : 'Save medication'}
+                                    </button>
+                                </form>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                    {medications.length === 0 && <p style={{ fontSize: 14, color: 'var(--slate-400)', textAlign: 'center' }}>No medications added.</p>}
+
+                                    {medications.map(m => (
+                                        <div key={m.id} style={{ border: '1px solid var(--slate-200)', borderRadius: 12, padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                                <div>
+                                                    <h4 style={{ fontSize: 16, fontWeight: 600, color: 'var(--blue-900)' }}>{m.name}</h4>
+                                                    {m.description && <p style={{ fontSize: 13, color: 'var(--slate-600)', marginTop: 4 }}>{m.description}</p>}
+                                                </div>
+                                                <button className="tag-remove" onClick={() => handleDeleteMedication(m.id)}>✕</button>
+                                            </div>
+
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                                {m.scrapedContent ? (
+                                                    <span className="tag tag-green">✓ Insert loaded</span>
+                                                ) : (
+                                                    <span className="tag tag-slate">No insert</span>
+                                                )}
+                                            </div>
+
+                                            <div style={{ borderTop: '1px solid var(--slate-100)', paddingTop: 12, marginTop: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, cursor: 'pointer' }}>
+                                                    <input type="checkbox" checked={m.assigned} onChange={e => handleAssignMedication(m.id, e.target.checked)} style={{ accentColor: 'var(--success)', transform: 'scale(1.2)' }} />
+                                                    <span style={{ fontWeight: 500 }}>Assign to patient</span>
+                                                </label>
+                                                {m.assigned ? <span className="tag tag-blue" style={{ fontSize: 11 }}>Visible to AI</span> : <span className="tag tag-slate" style={{ fontSize: 11 }}>Not assigned</span>}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Panel Derecho: Estudios */}
+                            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                                <div>
+                                    <h2 className="card-title">Patient's studies</h2>
+                                    <p style={{ fontSize: 13, color: 'var(--slate-400)', marginTop: -8 }}>Add lab results or imaging.</p>
+                                </div>
+
+                                <form onSubmit={handleAddStudy} style={{ display: 'flex', flexDirection: 'column', gap: 12, background: 'var(--slate-50)', padding: 16, borderRadius: 12 }}>
+                                    <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--slate-600)' }}>＋ Add study</h3>
+                                    <div style={{ display: 'flex', gap: 12 }}>
+                                        <input className="input" placeholder="Name *" value={studyName} onChange={e => setStudyName(e.target.value)} style={{ flex: 1 }} required />
+                                        <input className="input" type="date" value={studyDate} onChange={e => setStudyDate(e.target.value)} style={{ width: 140 }} />
+                                    </div>
+                                    <textarea className="input" placeholder="Result (free text) *" value={studyResult} onChange={e => setStudyResult(e.target.value)} rows={3} required style={{ resize: 'vertical' }} />
+                                    <textarea className="input" placeholder="Notes for patient (optional)" value={studyNotes} onChange={e => setStudyNotes(e.target.value)} rows={2} style={{ resize: 'vertical' }} />
+
+                                    <button type="submit" className="btn btn-secondary" disabled={!studyName || !studyResult || studySaving}>
+                                        {studySaving ? <span className="spinner" /> : 'Save study'}
+                                    </button>
+                                </form>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                    {studies.length === 0 && <p style={{ fontSize: 14, color: 'var(--slate-400)', textAlign: 'center' }}>No studies added.</p>}
+
+                                    {studies.map(s => (
+                                        <div key={s.id} style={{ border: '1px solid var(--slate-200)', borderRadius: 12, padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                                <div>
+                                                    <h4 style={{ fontSize: 16, fontWeight: 600, color: 'var(--blue-900)' }}>{s.name}</h4>
+                                                    <p style={{ fontSize: 12, color: 'var(--slate-400)', marginTop: 2 }}>
+                                                        {new Date(s.date).toLocaleDateString('en-US')}
+                                                    </p>
+                                                </div>
+                                                <button className="tag-remove" onClick={() => handleDeleteStudy(s.id)}>✕</button>
+                                            </div>
+
+                                            <div style={{ background: 'var(--slate-50)', padding: 12, borderRadius: 8, fontSize: 13, color: 'var(--slate-700)', fontStyle: 'italic' }}>
+                                                "{s.result.length > 80 ? s.result.slice(0, 80) + '...' : s.result}"
+                                            </div>
+
+                                            <div style={{ borderTop: '1px solid var(--slate-100)', paddingTop: 12, marginTop: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, cursor: 'pointer' }}>
+                                                    <input type="checkbox" checked={s.assigned} onChange={e => handleAssignStudy(s.id, e.target.checked)} style={{ accentColor: 'var(--blue-500)', transform: 'scale(1.2)' }} />
+                                                    <span style={{ fontWeight: 500 }}>Assign to patient</span>
+                                                </label>
+                                                {s.assigned ? <span className="tag tag-blue" style={{ fontSize: 11 }}>Visible to AI</span> : <span className="tag tag-slate" style={{ fontSize: 11 }}>Not assigned</span>}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Panel Central/Inferior: Mensajes (Opcional, ocupando ancho completo si queremos) */}
+                            <div className="card" style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: 24 }}>
+                                <div>
+                                    <h2 className="card-title">Messages from patient</h2>
+                                    <p style={{ fontSize: 13, color: 'var(--slate-400)', marginTop: -8 }}>Written notes sent after voice calls.</p>
+                                </div>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                    {messages.length === 0 && <p style={{ fontSize: 14, color: 'var(--slate-400)', textAlign: 'center', padding: 20 }}>No messages yet.</p>}
+
+                                    {messages.map(msg => (
+                                        <div key={msg.id} style={{ border: '1px solid var(--slate-200)', borderRadius: 12, padding: 16, background: 'var(--slate-50)' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                                                <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: 'var(--blue-600)' }}>Patient Message</span>
+                                                <span style={{ fontSize: 11, color: 'var(--slate-400)' }}>{new Date(msg.timestamp).toLocaleString()}</span>
+                                            </div>
+                                            <p style={{ fontSize: 14, color: 'var(--slate-800)', margin: 0, whiteSpace: 'pre-wrap' }}>{msg.text}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 )}
             </main>

@@ -57,7 +57,7 @@ export default function Sidebar({ onOpenProfile, onOpenChat, profileRefreshTrigg
                                 </div>
                             )}
                         </div>
-                        <div className="profile-stat" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+                        {/* <div className="profile-stat" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
                                 <span>Conditions</span>
                                 <span className="profile-stat-val">{profile.conditions?.length || 0}</span>
@@ -67,7 +67,7 @@ export default function Sidebar({ onOpenProfile, onOpenChat, profileRefreshTrigg
                                     {profile.conditions.join(', ')}
                                 </div>
                             )}
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 

@@ -85,21 +85,20 @@ export default function VoiceAgent() {
     }, [updateVisualizer])
 
     const [showPostCall, setShowPostCall] = useState(false)
+    const [showMessageInput, setShowMessageInput] = useState(false)
     const [message, setMessage] = useState('')
     const [sendingMsg, setSendingMsg] = useState(false)
     const [msgSent, setMsgSent] = useState(false)
+    const [isResolved, setIsResolved] = useState(null)
 
     // Watch for call end to show post-call option
     useEffect(() => {
         if (conversation.status === 'connected') {
             setShowPostCall(false) // Reset if reconnected
+            setShowMessageInput(false)
             setMsgSent(false)
             setMessage('')
-        } else if (conversation.status === 'disconnected' || conversation.status === 'finished') {
-            // Only show if we were previously connecting or connected (to avoid showing on initial load)
-            // But for simplicity, we can just show it when disconnected if it was ever active.
-            // Actually, conversation.status might be 'disconnected' by default.
-            // Let's use a ref to track if a call was ever active.
+            setIsResolved(null)
         }
     }, [conversation.status])
 
@@ -160,12 +159,36 @@ export default function VoiceAgent() {
                                 <div style={{ textAlign: 'center', color: 'var(--success)', fontSize: 14, padding: '12px 0' }}>
                                     ✓ Message sent to your doctor!
                                 </div>
+                            ) : isResolved === true ? (
+                                <div style={{ textAlign: 'center', color: 'var(--blue-600)', fontSize: 14, padding: '12px 0' }}>
+                                    Glad we could help! Take care.
+                                </div>
+                            ) : !showMessageInput ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center' }}>
+                                    <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--slate-700)', textAlign: 'center' }}>Was your question resolved?</h3>
+                                    <div style={{ display: 'flex', gap: 12, width: '100%' }}>
+                                        <button 
+                                            onClick={() => setIsResolved(true)}
+                                            className="btn btn-sm btn-secondary" 
+                                            style={{ flex: 1 }}
+                                        >
+                                            Yes, thanks
+                                        </button>
+                                        <button 
+                                            onClick={() => setShowMessageInput(true)}
+                                            className="btn btn-sm btn-secondary" 
+                                            style={{ flex: 1 }}
+                                        >
+                                            No, send msg
+                                        </button>
+                                    </div>
+                                </div>
                             ) : (
                                 <>
-                                    <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--slate-700)', textAlign: 'center' }}>Send a message to your doctor?</h3>
+                                    <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--slate-700)', textAlign: 'center' }}>Tell us more for your doctor</h3>
                                     <textarea
                                         className="input"
-                                        placeholder="Type your message here..."
+                                        placeholder="What was not clear? Your doctor will read this."
                                         value={message}
                                         onChange={e => setMessage(e.target.value)}
                                         rows={3}
