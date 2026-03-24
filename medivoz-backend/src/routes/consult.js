@@ -2,7 +2,6 @@ import { Router } from 'express'
 import { readJSON } from '../services/db.js'
 import { scrapeUrl } from '../services/firecrawl.js'
 import { generateMedicalResponse } from '../services/gemini.js'
-import { textToSpeech } from '../services/elevenlabs.js'
 
 const router = Router()
 
@@ -27,18 +26,10 @@ router.post('/', async (req, res) => {
   // 2. Generar respuesta personalizada con Gemini
   const textResponse = await generateMedicalResponse(query, profile, '', doctorData)
 
-  // 3. Convertir a audio con ElevenLabs
-  const audioBuffer = await textToSpeech(textResponse)
-  const audioBase64 = audioBuffer.toString('base64')
-
   res.json({
     ok: true,
     query,
-    text: textResponse,
-    audio: {
-      base64: audioBase64,
-      mimeType: 'audio/mpeg',
-    }
+    text: textResponse
   })
 })
 

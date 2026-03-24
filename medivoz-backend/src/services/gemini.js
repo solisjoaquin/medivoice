@@ -6,7 +6,7 @@ function getAi() {
     });
 }
 
-function buildSystemPrompt(profile, doctorData = null) {
+export function buildSystemPrompt(profile, doctorData = null) {
     const meds = profile.medications?.join(', ') || 'none'
     const conditions = profile.conditions?.join(', ') || 'none'
     const allergies = profile.allergies?.join(', ') || 'none'

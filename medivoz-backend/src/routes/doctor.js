@@ -125,4 +125,29 @@ router.patch('/studies/:id/assign', (req, res) => {
     res.json({ ok: true })
 })
 
+// GET /doctor/messages
+router.get('/messages', (req, res) => {
+    const db = readDoctorDb()
+    res.json(db.messages || [])
+})
+
+// POST /doctor/messages
+router.post('/messages', (req, res) => {
+    const { text } = req.body
+    if (!text) return res.status(400).json({ error: 'Missing text' })
+
+    const db = readDoctorDb()
+    const message = {
+        id: crypto.randomUUID(),
+        text,
+        timestamp: new Date().toISOString()
+    }
+
+    if (!db.messages) db.messages = []
+    db.messages.push(message)
+    writeDoctorDb(db)
+
+    res.json(message)
+})
+
 export default router

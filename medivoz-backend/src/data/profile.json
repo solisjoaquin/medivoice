@@ -1,7 +1,11 @@
 {
   "name": "Jhon Doe",
-  "medications": [],
+  "medications": [
+    "ibuprofen 400"
+  ],
   "conditions": [],
-  "allergies": [],
+  "allergies": [
+    "chocolate"
+  ],
   "studies": []
 }

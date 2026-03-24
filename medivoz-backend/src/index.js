@@ -7,6 +7,7 @@ import profileRoutes from './routes/profile.js'
 import consultRoutes from './routes/consult.js'
 import chatRoutes from './routes/chat.js'
 import doctorRoutes from './routes/doctor.js'
+import agentRoutes from './routes/agent.js'
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -30,6 +31,7 @@ app.use('/profile', profileRoutes)
 app.use('/consult', consultRoutes)
 app.use('/chat', chatRoutes)
 app.use('/doctor', doctorRoutes)
+app.use('/agent', agentRoutes)
 
 // Error handler global
 app.use((err, req, res, next) => {
@@ -61,5 +63,8 @@ app.listen(PORT, () => {
   GET  /chat
   POST /chat
   DELETE /chat
+
+  GET /agent/signed-url
+  GET /agent/prompt
   `)
 })
